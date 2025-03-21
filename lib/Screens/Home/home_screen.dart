@@ -141,14 +141,12 @@ class _HomePageState extends State<HomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       TabBar(
+                        padding: EdgeInsets.all(0),
                         onTap: homeController.chnageTabIndex,
-
                         tabAlignment: TabAlignment.start,
                         isScrollable: true,
                         tabs: [
                           Tab(
-
-
                             child:  Container(
                               height: MediaQuery.of(context).size.height* 0.06,
                               width: MediaQuery.of(context).size.width * 0.25,

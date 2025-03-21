@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:saleapp/BottomPopups/popup_followup_lead.dart';
 import 'package:saleapp/Screens/Home/home_controller.dart';
+import 'package:saleapp/Screens/LeadDetails/not_intrested_leads.dart';
+import 'package:saleapp/Screens/LeadDetails/visitdone_leads.dart';
 
 class LeadDetailsScreen extends StatefulWidget
 {
@@ -177,7 +179,10 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                               child: InkWell(
                                 onTap: ()
                                 {
-
+                                  if(!(currentStatus=="visitdone"))
+                                  {
+                                    Get.to(()=>VisitDoneLeads());
+                                  }
                                 },
                                 child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
@@ -190,20 +195,30 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                   )
                                                             ),
                               ),),
-                            Tab(child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                                child: Text("Not Intrested",style: TextStyle(
-                                    color:  currentStatus=="notintrested"?Colors.green: Colors.white,
-                                    fontFamily: 'SpaceGrotesk'
-                                ),),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.white, width: 2),
-                                )
-                            ),),
+                            Tab(
+                              child: InkWell(
+                                onTap: ()
+                                {
+                                  Get.to(()=>NotIntrestedLeads());
+                                },
+                                child: Container(
+
+                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                                  child: Text("Not Intrested",style: TextStyle(
+                                      color:  currentStatus=="notintrested"?Colors.green: Colors.white,
+                                      fontFamily: 'SpaceGrotesk'
+                                  ),),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.white, width: 2),
+                                  )
+                                                            ),
+                              ),),
                             Tab(child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
                                 child: Text("Junk", style: TextStyle(
-                                    color:  currentStatus=="new"?Colors.green: Colors.white,
+                                    color:
+                                   // currentStatus=="new"?Colors.green:
+                                    Colors.white,
                                     fontFamily: 'SpaceGrotesk'
                                 ),),
                                 decoration: BoxDecoration(
@@ -216,24 +231,6 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                     ]
                 )
             ),
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
             SizedBox(height: 15,),

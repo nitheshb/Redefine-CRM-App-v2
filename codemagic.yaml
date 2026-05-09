@@ -38,10 +38,31 @@ workflows:
 
       - name: Build IPA
         script: |
-          # Strip unsupported -G flag from all pod xcconfig files (Xcode 15+ fix)
-          find "$CM_BUILD_DIR/ios/Pods" -name "*.xcconfig" -exec sed -i '' 's/ -G//g' {} +
+          # Step 1: Generate Xcode project files without building
+          flutter build ios --config-only --release
           
-          flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
+          # Step 2: Re-run pod install to ensure everything is in sync
+          cd "$CM_BUILD_DIR/ios"
+          pod install
+          
+          # Step 3: Strip unsupported -G flag from all pod xcconfig files
+          find "$CM_BUILD_DIR/ios/Pods" -name "*.xcconfig" -exec sed -i '' 's/ -G//g' {} +
+          find "$CM_BUILD_DIR/ios/Pods" -name "*.xcconfig" -exec sed -i '' 's/-G //g' {} +
+          
+          # Step 4: Archive with xcodebuild
+          xcodebuild -workspace "$CM_BUILD_DIR/ios/Runner.xcworkspace" \
+            -scheme Runner \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination generic/platform=iOS \
+            -archivePath "$CM_BUILD_DIR/build/ios/Runner.xcarchive" \
+            archive | xcpretty
+          
+          # Step 5: Export IPA
+          xcodebuild -exportArchive \
+            -archivePath "$CM_BUILD_DIR/build/ios/Runner.xcarchive" \
+            -exportOptionsPlist /Users/builder/export_options.plist \
+            -exportPath "$CM_BUILD_DIR/build/ios/ipa" | xcpretty
 
     artifacts:
       - build/ios/ipa/*.ipa

@@ -13,7 +13,7 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.crmcustomers.app
       flutter: stable
-      xcode: latest
+      xcode: 16.2
       cocoapods: default
     scripts:
       - name: Set up local.properties

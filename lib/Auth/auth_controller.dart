@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:saleapp/Auth/login_screen.dart';
 import 'package:saleapp/Screens/SuperHomePage/superhomepage_screen.dart';
+import 'package:saleapp/services/fcm_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Utilities/snackbar.dart';
@@ -47,6 +48,11 @@ class AuthController extends GetxController {
           snackBarMsg("Sucess");
           requestCallPermission();
          await storeDetailsInLocal();
+
+        // Initialize FCM token and start listening for refreshes
+        await FcmService.instance.initToken();
+        FcmService.instance.listenForTokenRefresh();
+
         Get.offAll(() => SuperHomePage());
 
 
@@ -67,6 +73,9 @@ class AuthController extends GetxController {
   // Logout
   Future<void> logout() async {
     try {
+      // Clear FCM token before signing out
+      await FcmService.instance.clearToken();
+
       await _auth.signOut();
       snackBarMsg('Logged Out');
       Get.offAll(() => LoginScreen());
@@ -94,7 +103,7 @@ class AuthController extends GetxController {
       await prefs.setString('offPh', userData['offPh'] ?? '');
       await prefs.setString('perPh', userData['perPh'] ?? '');
       await prefs.setString('userStatus', userData['userStatus'] ?? '');
-      await prefs.setString('user_fcmtoken', userData['user_fcmtoken'] ?? '');
+      await prefs.setString('crm_app_fcm_token', userData['crm_app_fcm_token'] ?? '');
       await prefs.setString('avatorUrl', userData['avatorUrl'] ?? '');
       List<String> department = (userData['department'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
       List<String> roles = (userData['roles'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];

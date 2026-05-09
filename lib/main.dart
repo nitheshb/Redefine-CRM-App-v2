@@ -9,6 +9,7 @@ import 'package:saleapp/Auth/login_screen.dart';
 import 'package:saleapp/Screens/Home/home_controller.dart';
 import 'package:saleapp/Screens/LeadDetails/not_intrested_leads.dart';
 import 'package:saleapp/Screens/LeadDetails/visitdone_leads.dart';
+import 'package:saleapp/services/fcm_service.dart';
 
 import 'Auth/auth_controller.dart';
 import 'Screens/SuperHomePage/superhomepage_screen.dart';
@@ -39,6 +40,12 @@ class MyApp extends StatelessWidget {
    final HomeController homeController=Get.put(HomeController());
     final currentUser = FirebaseAuth.instance.currentUser;
     print(currentUser?.uid.toString());
+
+    // Initialize FCM token for already-logged-in users
+    if (currentUser != null) {
+      FcmService.instance.initToken();
+      FcmService.instance.listenForTokenRefresh();
+    }
     return  GetMaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,

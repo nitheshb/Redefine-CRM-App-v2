@@ -37,7 +37,7 @@ class _SuperHomePageState extends State<SuperHomePage> {
     String offPh = prefs.getString('offPh') ?? 'No Office Phone';
     String perPh = prefs.getString('perPh') ?? 'No Personal Phone';
     String userStatus = prefs.getString('userStatus') ?? 'No Status';
-    String userFcmtoken = prefs.getString('user_fcmtoken') ?? 'No FCM Token';
+    String userFcmtoken = prefs.getString('crm_app_fcm_token') ?? 'No FCM Token';
     String avatarUrl = prefs.getString('avatorUrl') ?? 'No Avatar URL';
 
     List<String> department = prefs.getStringList('department') ?? [];
@@ -58,7 +58,7 @@ class _SuperHomePageState extends State<SuperHomePage> {
     print("Office Phone: $offPh");
     print("Personal Phone: $perPh");
     print("User Status: $userStatus");
-    print("User FCM Token: $userFcmtoken");
+    print("CRM App FCM Token: $userFcmtoken");
     print("Avatar URL: $avatarUrl");
     print("Department: $department");
     print("Roles: $roles");

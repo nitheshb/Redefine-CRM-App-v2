@@ -42,13 +42,15 @@ post_install do |installer|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
     end
-    # Fix: Strip unsupported '-G' compiler flag from BoringSSL-GRPC source files
-    target.source_build_phase.files.each do |file|
-      if file.settings && file.settings['COMPILER_FLAGS']
-        flags = file.settings['COMPILER_FLAGS']
-        new_flags = flags.gsub(/-G\b/, '').gsub(/\s+/, ' ').strip
-        if new_flags != flags
-          file.settings['COMPILER_FLAGS'] = new_flags
+    # Fix: Strip unsupported '-G' flag (only on native targets, not aggregate targets)
+    if target.respond_to?(:source_build_phase)
+      target.source_build_phase.files.each do |file|
+        if file.settings && file.settings['COMPILER_FLAGS']
+          flags = file.settings['COMPILER_FLAGS']
+          new_flags = flags.gsub(/-G\b/, '').gsub(/\s+/, ' ').strip
+          if new_flags != flags
+            file.settings['COMPILER_FLAGS'] = new_flags
+          end
         end
       end
     end

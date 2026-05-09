@@ -30,14 +30,18 @@ workflows:
       - name: Set up code signing
         script: |
           keychain initialize
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+          app-store-connect fetch-signing-files "com.crmcustomers.app" \
             --type IOS_APP_STORE \
             --create
           keychain add-certificates
           xcode-project use-profiles
 
       - name: Build IPA
-        script: flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
+        script: |
+          # Strip unsupported -G flag from all pod xcconfig files (Xcode 15+ fix)
+          find "$CM_BUILD_DIR/ios/Pods" -name "*.xcconfig" -exec sed -i '' 's/ -G//g' {} +
+          
+          flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
 
     artifacts:
       - build/ios/ipa/*.ipa

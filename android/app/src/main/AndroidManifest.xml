@@ -5,7 +5,7 @@
     <!-- Declare that calling is optional -->
     <uses-feature android:name="android.hardware.telephony" android:required="false"/>
     <application
-        android:label="Redefine CRM"
+        android:label="My CRM app: Real estate"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

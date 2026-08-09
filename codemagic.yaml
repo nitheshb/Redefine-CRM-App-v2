@@ -1,10 +1,8 @@
 ﻿workflows:
 
-  # ──────────────────────────────────────────────────────────────────────────
-  # My CRM app: Real estate — iOS App Store Release
-  # ──────────────────────────────────────────────────────────────────────────
+  # ── iOS App Store Release ─────────────────────────────────────────────────
   ios-crm-release:
-    name: "iOS - My CRM app: Real estate"
+    name: "iOS - My CRM app Real estate"
     max_build_duration: 60
     instance_type: mac_mini_m2
     integrations:
@@ -15,27 +13,22 @@
       cocoapods: default
       vars:
         BUNDLE_ID: com.crmcustomers.app
-        APP_NAME: "My CRM app: Real estate"
-
+        APP_NAME: "My CRM app Real estate"
     scripts:
       - name: Set up local.properties
         script: |
           echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
-
-      - name: Disable Swift Package Manager (Flutter compatibility)
+      - name: Disable Swift Package Manager
         script: flutter config --no-enable-swift-package-manager
-
       - name: Get Flutter packages
         script: flutter packages pub get
-
-      - name: Generate app icons (dart run flutter_launcher_icons)
+      - name: Generate app icons
         script: dart run flutter_launcher_icons
-
-      - name: Install CocoaPods dependencies
+      - name: Install CocoaPods
         script: |
-          cd ios && pod install
-
-      - name: Set up code signing (Codemagic integration)
+          cd ios
+          pod install
+      - name: Set up code signing
         script: |
           keychain initialize
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
@@ -43,22 +36,18 @@
             --create
           keychain add-certificates
           xcode-project use-profiles
-
-      - name: Build iOS (no-codesign first)
+      - name: Build iOS
         script: flutter build ios --release --no-codesign
-
       - name: Archive and export IPA
         script: |
           xcode-project build-ipa \
             --workspace ios/Runner.xcworkspace \
             --scheme Runner \
             --archive-flags="-destination 'generic/platform=iOS'"
-
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - flutter_drive.log
-
     publishing:
       app_store_connect:
         auth: integration
@@ -71,4 +60,37 @@
           success: true
           failure: true
 
-  
+  # ── Android Play Store Release ────────────────────────────────────────────
+  android-crm-release:
+    name: "Android - My CRM app Real estate"
+    max_build_duration: 60
+    instance_type: linux_x2
+    environment:
+      flutter: stable
+      java: 17
+      android_signing:
+        - crm_keystore
+      vars:
+        APP_NAME: "My CRM app Real estate"
+        PACKAGE_NAME: com.redefine.saleapp
+    scripts:
+      - name: Set up local.properties
+        script: |
+          echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+      - name: Get Flutter packages
+        script: flutter packages pub get
+      - name: Generate app icons
+        script: dart run flutter_launcher_icons
+      - name: Build Android AAB
+        script: flutter build appbundle --release
+    artifacts:
+      - build/**/outputs/**/*.aab
+      - build/**/outputs/**/mapping.txt
+      - build/**/outputs/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - rakeshduvva49@gmail.com
+        notify:
+          success: true
+          failure: true

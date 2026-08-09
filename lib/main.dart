@@ -3,13 +3,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:saleapp/Auth/login_screen.dart';
 import 'package:saleapp/Screens/Home/home_controller.dart';
-import 'package:saleapp/Screens/LeadDetails/not_intrested_leads.dart';
-import 'package:saleapp/Screens/LeadDetails/visitdone_leads.dart';
 import 'package:saleapp/services/fcm_service.dart';
+import 'package:saleapp/services/remote_config_service.dart';
 
 import 'Auth/auth_controller.dart';
 import 'Screens/SuperHomePage/superhomepage_screen.dart';
@@ -18,10 +15,13 @@ import 'firebase_options.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-
   await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform
   );
+
+  // Initialize Remote Config (fetch defaults + first activation)
+  await RemoteConfigService.instance.initialize();
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,  // Only allow portrait mode
   ]).then((_) {
@@ -36,10 +36,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-   final AuthController authController = Get.put(AuthController());
-   final HomeController homeController=Get.put(HomeController());
+   Get.put(AuthController());
+   Get.put(HomeController());
     final currentUser = FirebaseAuth.instance.currentUser;
-    print(currentUser?.uid.toString());
+    debugPrint('Current user: ${currentUser?.uid}');
 
     // Initialize FCM token for already-logged-in users
     if (currentUser != null) {

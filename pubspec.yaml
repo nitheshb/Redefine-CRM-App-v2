@@ -46,6 +46,8 @@ dependencies:
   intl: ^0.20.2
   flutter_phone_direct_caller: ^2.1.1
   firebase_messaging: ^15.0.0
+  firebase_remote_config: ^5.0.0
+  package_info_plus: ^8.0.0
 
 
 dev_dependencies:
